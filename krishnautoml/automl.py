@@ -79,4 +79,4 @@ class KrishnAutoML:
 
     def save(self, path: str = "best_model.pkl") -> None:
         dump(self.best_model, path)
-        print(f"✅ Model saved at {path}")
+        print(f"Model saved at {path}")
