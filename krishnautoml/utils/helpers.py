@@ -34,31 +34,26 @@ def get_default_scoring(problem_type: str) -> str:
 
 
 
+# In krishnautoml/utils/helpers.py
+
 def safe_import_xgboost(task: str, random_state: int):
-    """Return configured xgboost model or None if xgboost not installed."""
+    """Return configured xgboost model class or None if not installed."""
     try:
         from xgboost import XGBClassifier, XGBRegressor
     except Exception:
         return None
 
-
-    common = dict(n_estimators=400, max_depth=6, subsample=0.8, colsample_bytree=0.8, random_state=random_state, n_jobs=-1)
     if task == "cls":
-        return XGBClassifier(**common, eval_metric="logloss")
-    return XGBRegressor(**common)
-
-
-
+        return XGBClassifier
+    return XGBRegressor
 
 def safe_import_lightgbm(task: str, random_state: int):
-    """Return configured lightgbm model or None if lightgbm not installed."""
+    """Return configured lightgbm model class or None if not installed."""
     try:
         from lightgbm import LGBMClassifier, LGBMRegressor
     except Exception:
         return None
 
-
-    common = dict(n_estimators=500, learning_rate=0.05, subsample=0.8, colsample_bytree=0.8, random_state=random_state)
     if task == "cls":
-        return LGBMClassifier(**common)
-    return LGBMRegressor(**common)
+        return LGBMClassifier
+    return LGBMRegressor

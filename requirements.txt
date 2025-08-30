@@ -2,8 +2,8 @@ pandas
 numpy
 scikit-learn
 joblib
-# Optional:
 xgboost
 lightgbm
 seaborn
 matplotlib
+optuna

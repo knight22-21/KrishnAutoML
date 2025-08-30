@@ -66,8 +66,8 @@ class KrishnAutoML:
         candidates = factory.get_models(models)
 
 
-        tuner = Tuner(problem_type=self.problem_type, n_splits=self.n_splits, random_state=self.random_state)
-        self.results, self.best_model = tuner.run(candidates, self.X, self.y)
+        tuner = Tuner(cv=self.n_splits, random_state=self.random_state)
+        self.results, self.best_model = tuner.run(candidates, self.X, self.y, problem_type=self.problem_type)
         return self
 
 
