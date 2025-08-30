@@ -7,6 +7,7 @@ from .data.preprocessing import Preprocessor
 from .models.model_factory import ModelFactory
 from .tuning.tuner import Tuner
 from .evaluation.evaluator import Evaluator
+from .eda.eda_report import EDAReport
 from .utils.helpers import detect_problem_type
 from joblib import dump
 
@@ -80,3 +81,14 @@ class KrishnAutoML:
     def save(self, path: str = "best_model.pkl") -> None:
         dump(self.best_model, path)
         print(f"Model saved at {path}")
+        
+    
+    def run_eda(self) -> "KrishnAutoML":
+        """Generates an EDA report."""
+        if self._loader.X_orig is None or self._loader.y_orig is None:
+            raise RuntimeError("Data not loaded. Call load_data() first.")
+
+        eda_report = EDAReport()
+        eda_report.generate(self._loader.X_orig, self._loader.y_orig)
+        
+        return self

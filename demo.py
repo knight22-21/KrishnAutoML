@@ -4,6 +4,7 @@ from krishnautoml import KrishnAutoML
 automl = KrishnAutoML(target="Survived", problem_type="auto")
 automl.load_data("data/titanic.csv") \
       .preprocess() \
+      .run_eda() \
       .train_models()
 
 # Now, call the evaluation and save methods as separate steps
