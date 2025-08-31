@@ -41,8 +41,12 @@ class KrishnAutoML:
 
         self.X = None
         self.y = None
+        self.X_test = None     # also make sure these are defined
+        self.y_test = None
         self.best_model = None
         self.results: Dict[str, Any] = {}
+
+        self.evaluator = Evaluator()
 
 
     # Fluent API
@@ -61,21 +65,44 @@ class KrishnAutoML:
 
 
     def train_models(self, models: Optional[List[str]] = None) -> "KrishnAutoML":
-        """Train multiple candidate models (defaults vary by problem type)."""
         factory = ModelFactory(problem_type=self.problem_type, random_state=self.random_state)
         candidates = factory.get_models(models)
 
+        from sklearn.model_selection import train_test_split
+        X_train, X_test, y_train, y_test = train_test_split(
+            self.X, self.y, test_size=0.2, random_state=self.random_state
+        )
 
         tuner = Tuner(cv=self.n_splits, random_state=self.random_state)
-        self.results, self.best_model = tuner.run(candidates, self.X, self.y, problem_type=self.problem_type)
+        self.results, self.best_model = tuner.run(candidates, X_train, y_train, problem_type=self.problem_type)
+
+        # Store test data for evaluation
+        self.X_test = X_test
+        self.y_test = y_test
+
         return self
 
 
-    def evaluate(self, metrics: Optional[List[str]] = None) -> Dict[str, float]:
-        evaluator = Evaluator(problem_type=self.problem_type)
-        scores = evaluator.evaluate(self.best_model, self.X, self.y, metrics=metrics)
-        self.results["evaluation"] = scores
-        return scores
+
+    def evaluate(self):
+        if self.best_model is None:
+            raise Exception("No trained model found. Run train_models() first.")
+        if self.X_test is None or self.y_test is None:
+            raise Exception("Test data not available. Ensure load_data() and train_models() were called.")
+
+        print(" Evaluating model...")
+        results = self.evaluator.evaluate(
+            model=self.best_model,
+            X=self.X_test,
+            y=self.y_test,
+            problem_type=self.problem_type
+        )
+
+        print("Evaluation complete. Metrics:")
+        for k, v in results.items():
+            print(f"  {k}: {v:.4f}")
+
+        return results
 
 
     def save(self, path: str = "best_model.pkl") -> None:
