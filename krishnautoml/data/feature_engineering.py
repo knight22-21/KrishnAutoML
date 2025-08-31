@@ -6,8 +6,11 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from category_encoders import TargetEncoder
 from scipy.sparse import hstack
 
+
 class FeatureEngineer:
-    def __init__(self, use_target_encoding=True, use_tfidf=True, max_tfidf_features=500):
+    def __init__(
+        self, use_target_encoding=True, use_tfidf=True, max_tfidf_features=500
+    ):
         self.use_target_encoding = use_target_encoding
         self.use_tfidf = use_tfidf
         self.max_tfidf_features = max_tfidf_features
@@ -38,7 +41,11 @@ class FeatureEngineer:
             self.target_encoders = te
         else:
             ohe = OneHotEncoder(handle_unknown="ignore", sparse=False)
-            X_categ = pd.DataFrame(ohe.fit_transform(X[self.categorical_cols])) if self.categorical_cols else pd.DataFrame()
+            X_categ = (
+                pd.DataFrame(ohe.fit_transform(X[self.categorical_cols]))
+                if self.categorical_cols
+                else pd.DataFrame()
+            )
             self.onehot_encoder = ohe
 
         # ----- Text -----
@@ -57,6 +64,7 @@ class FeatureEngineer:
             X_text = None
 
         from scipy.sparse import csr_matrix
+
         if isinstance(X_numeric, pd.DataFrame):
             X_numeric = csr_matrix(X_numeric.values)
         if isinstance(X_categ, pd.DataFrame):
@@ -78,7 +86,11 @@ class FeatureEngineer:
         if self.use_target_encoding and self.categorical_cols:
             X_categ = self.target_encoders.transform(X[self.categorical_cols])
         else:
-            X_categ = pd.DataFrame(self.onehot_encoder.transform(X[self.categorical_cols])) if self.categorical_cols else pd.DataFrame()
+            X_categ = (
+                pd.DataFrame(self.onehot_encoder.transform(X[self.categorical_cols]))
+                if self.categorical_cols
+                else pd.DataFrame()
+            )
 
         # ----- Text -----
         text_matrices = []
@@ -90,6 +102,7 @@ class FeatureEngineer:
 
         # Combine everything
         from scipy.sparse import csr_matrix, hstack
+
         if isinstance(X_numeric, pd.DataFrame):
             X_numeric = csr_matrix(X_numeric.values)
         if isinstance(X_categ, pd.DataFrame):
@@ -104,11 +117,21 @@ class FeatureEngineer:
         """
         Auto-detect numeric, categorical, and text features.
         """
-        self.numeric_cols = X.select_dtypes(include=["int64", "float64"]).columns.tolist()
-        self.categorical_cols = X.select_dtypes(include=["object", "category"]).columns.tolist()
+        self.numeric_cols = X.select_dtypes(
+            include=["int64", "float64"]
+        ).columns.tolist()
+        self.categorical_cols = X.select_dtypes(
+            include=["object", "category"]
+        ).columns.tolist()
 
         # Heuristic: long string columns → text
-        self.text_cols = [col for col in self.categorical_cols if X[col].astype(str).str.len().mean() > 20]
+        self.text_cols = [
+            col
+            for col in self.categorical_cols
+            if X[col].astype(str).str.len().mean() > 20
+        ]
 
         # Remove text cols from categorical list
-        self.categorical_cols = [col for col in self.categorical_cols if col not in self.text_cols]
+        self.categorical_cols = [
+            col for col in self.categorical_cols if col not in self.text_cols
+        ]

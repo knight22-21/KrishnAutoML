@@ -5,10 +5,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import (
-    accuracy_score, precision_score, recall_score, f1_score,
-    roc_auc_score, confusion_matrix, roc_curve,
-    r2_score, mean_squared_error, mean_absolute_error
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    roc_auc_score,
+    confusion_matrix,
+    roc_curve,
+    r2_score,
+    mean_squared_error,
+    mean_absolute_error,
 )
+
 
 class Evaluator:
     def __init__(self, output_dir="reports/evaluation"):
@@ -24,7 +32,11 @@ class Evaluator:
 
         # Auto detect if not specified
         if problem_type == "auto":
-            problem_type = "classification" if len(np.unique(y)) < 20 and y.dtype in ["int32", "int64"] else "regression"
+            problem_type = (
+                "classification"
+                if len(np.unique(y)) < 20 and y.dtype in ["int32", "int64"]
+                else "regression"
+            )
 
         results = {}
 
@@ -43,9 +55,13 @@ class Evaluator:
         if "accuracy" in metrics:
             results["accuracy"] = accuracy_score(y, y_pred)
         if "precision" in metrics:
-            results["precision"] = precision_score(y, y_pred, average="weighted", zero_division=0)
+            results["precision"] = precision_score(
+                y, y_pred, average="weighted", zero_division=0
+            )
         if "recall" in metrics:
-            results["recall"] = recall_score(y, y_pred, average="weighted", zero_division=0)
+            results["recall"] = recall_score(
+                y, y_pred, average="weighted", zero_division=0
+            )
         if "f1" in metrics:
             results["f1"] = f1_score(y, y_pred, average="weighted", zero_division=0)
 

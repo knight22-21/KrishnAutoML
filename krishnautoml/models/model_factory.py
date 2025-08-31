@@ -6,6 +6,7 @@ from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 
 from ..utils.helpers import safe_import_lightgbm, safe_import_xgboost
 
+
 class ModelFactory:
     """Create candidate model classes based on the problem type."""
 
@@ -27,27 +28,37 @@ class ModelFactory:
                 models["random_forest"] = RandomForestClassifier
 
             xgb_cls = safe_import_xgboost(task="cls", random_state=self.random_state)
-            if xgb_cls and (include is None or "xgb" in include or "xgboost" in include):
+            if xgb_cls and (
+                include is None or "xgb" in include or "xgboost" in include
+            ):
                 models["xgboost"] = xgb_cls
 
             lgbm_cls = safe_import_lightgbm(task="cls", random_state=self.random_state)
-            if lgbm_cls and (include is None or "lgbm" in include or "lightgbm" in include):
+            if lgbm_cls and (
+                include is None or "lgbm" in include or "lightgbm" in include
+            ):
                 models["lightgbm"] = lgbm_cls
 
-        else: # regression
+        else:  # regression
             if include is None or "linreg" in include or "linear" in include:
                 models["linear"] = LinearRegression
             if include is None or "rf" in include or "randomforest" in include:
                 models["random_forest"] = RandomForestRegressor
 
             xgb_reg = safe_import_xgboost(task="reg", random_state=self.random_state)
-            if xgb_reg and (include is None or "xgb" in include or "xgboost" in include):
+            if xgb_reg and (
+                include is None or "xgb" in include or "xgboost" in include
+            ):
                 models["xgboost"] = xgb_reg
 
             lgbm_reg = safe_import_lightgbm(task="reg", random_state=self.random_state)
-            if lgbm_reg and (include is None or "lgbm" in include or "lightgbm" in include):
+            if lgbm_reg and (
+                include is None or "lgbm" in include or "lightgbm" in include
+            ):
                 models["lightgbm"] = lgbm_reg
 
         if not models:
-            raise RuntimeError("No models available. Check your 'include' filter or install optional libs.")
+            raise RuntimeError(
+                "No models available. Check your 'include' filter or install optional libs."
+            )
         return models

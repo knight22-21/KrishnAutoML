@@ -1,11 +1,15 @@
 import optuna
 import numpy as np
-from sklearn.model_selection import cross_val_score, KFold, StratifiedKFold, GridSearchCV
+from sklearn.model_selection import (
+    cross_val_score,
+    KFold,
+    StratifiedKFold,
+)
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import log_loss, mean_squared_error
-from xgboost.callback import EarlyStopping
 import warnings
-warnings.filterwarnings('ignore', category=UserWarning)
+
+warnings.filterwarnings("ignore", category=UserWarning)
+
 
 class Tuner:
     def __init__(self, n_trials=20, cv=5, use_optuna=True, random_state=42):
@@ -23,17 +27,25 @@ class Tuner:
         best_score = -np.inf
         best_model = None
 
-        cv_strategy = StratifiedKFold(n_splits=self.cv, shuffle=True, random_state=self.random_state) \
-                      if problem_type == "classification" else \
-                      KFold(n_splits=self.cv, shuffle=True, random_state=self.random_state)
+        cv_strategy = (
+            StratifiedKFold(
+                n_splits=self.cv, shuffle=True, random_state=self.random_state
+            )
+            if problem_type == "classification"
+            else KFold(n_splits=self.cv, shuffle=True, random_state=self.random_state)
+        )
 
         for name, model_cls in candidates.items():
             print(f"🔍 Tuning {name}...")
 
             if self.use_optuna:
                 study = optuna.create_study(direction="maximize")
-                study.optimize(lambda trial: self._objective(trial, model_cls, X, y, cv_strategy, problem_type),
-                               n_trials=self.n_trials)
+                study.optimize(
+                    lambda trial: self._objective(
+                        trial, model_cls, X, y, cv_strategy, problem_type
+                    ),
+                    n_trials=self.n_trials,
+                )
 
                 best_params = study.best_params
                 # Pass random_state to the model constructor after Optuna finds the best params
@@ -68,7 +80,7 @@ class Tuner:
                 "n_estimators": trial.suggest_int("n_estimators", 50, 300),
                 "max_depth": trial.suggest_int("max_depth", 3, 20),
             }
-        
+
         # --- REVISED XGBOOST LOGIC ---
         elif "xgb" in model_name or "xgboost" in model_name:
             # Note: This is for older versions of XGBoost.
@@ -76,38 +88,49 @@ class Tuner:
             params = {
                 "n_estimators": trial.suggest_int("n_estimators", 50, 300),
                 "max_depth": trial.suggest_int("max_depth", 3, 15),
-                "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.3, log=True),
+                "learning_rate": trial.suggest_float(
+                    "learning_rate", 0.01, 0.3, log=True
+                ),
                 "subsample": trial.suggest_float("subsample", 0.5, 1.0),
                 # Deprecated: use device='cuda' in new versions
-                "tree_method": "gpu_hist" if trial.suggest_categorical("use_gpu", [True, False]) else "auto",
-                "verbosity": 0 # Add this to suppress XGBoost warnings
+                "tree_method": (
+                    "gpu_hist"
+                    if trial.suggest_categorical("use_gpu", [True, False])
+                    else "auto"
+                ),
+                "verbosity": 0,  # Add this to suppress XGBoost warnings
             }
-            
-            # Since you're not using the new callbacks API, we must remove the parameters that cause the error
-            # This makes the code compatible with older versions of XGBoost's scikit-learn wrapper
+
             if "eval_metric" in params:
                 del params["eval_metric"]
             if "callbacks" in params:
                 del params["callbacks"]
 
             model = model_cls(**params)
-            
+
             # Split data for a single-fold validation within the trial
             X_train, X_val, y_train, y_val = train_test_split(
-                X, y, test_size=0.2, random_state=self.random_state, stratify=y if problem_type == "classification" else None
+                X,
+                y,
+                test_size=0.2,
+                random_state=self.random_state,
+                stratify=y if problem_type == "classification" else None,
             )
-            
+
             # Use deprecated early stopping parameters
-            model.fit(X_train, y_train,
-                      eval_set=[(X_val, y_val)],
-                      verbose=False) # Removed early_stopping_rounds and verbose
-            
+            model.fit(
+                X_train, y_train, eval_set=[(X_val, y_val)], verbose=False
+            )  # Removed early_stopping_rounds and verbose
+
             # The way to get the best score for older versions might be different or not available,
             # so we fall back to a simple evaluation.
             if hasattr(model, "best_score_") and model.best_score_ is not None:
                 return model.best_score_
             else:
-                from sklearn.metrics import log_loss, mean_squared_error, roc_auc_score, r2_score
+                from sklearn.metrics import (
+                    roc_auc_score,
+                    r2_score,
+                )
 
                 y_pred = model.predict(X_val)
                 if problem_type == "classification":
@@ -124,10 +147,12 @@ class Tuner:
             params = {
                 "n_estimators": trial.suggest_int("n_estimators", 50, 300),
                 "max_depth": trial.suggest_int("max_depth", -1, 20),
-                "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.3, log=True),
+                "learning_rate": trial.suggest_float(
+                    "learning_rate", 0.01, 0.3, log=True
+                ),
                 "subsample": trial.suggest_float("subsample", 0.5, 1.0),
                 "min_gain_to_split": trial.suggest_float("min_gain_to_split", 0, 1.0),
-                "verbose": -1  # Suppress all warnings and informational output
+                "verbose": -1,  # Suppress all warnings and informational output
             }
 
             # Conditionally add the device parameter to the dictionary
@@ -138,14 +163,18 @@ class Tuner:
 
             # Split data for a single-fold validation within the trial
             X_train, X_val, y_train, y_val = train_test_split(
-                X, y, test_size=0.2, random_state=self.random_state, stratify=y if problem_type == "classification" else None
+                X,
+                y,
+                test_size=0.2,
+                random_state=self.random_state,
+                stratify=y if problem_type == "classification" else None,
             )
 
             model = model_cls(**params)
 
             # Use 'auc' for pruning metric since we are maximizing
             pruning_metric = "auc" if problem_type == "classification" else "l1"
-            
+
             # The 'eval_metric' parameter tells LightGBM which metrics to compute
             if problem_type == "classification":
                 eval_metric = [pruning_metric, "binary_logloss"]
@@ -153,22 +182,27 @@ class Tuner:
                 eval_metric = [pruning_metric, "l2"]
 
             # Fit the model with early stopping callbacks
-            model.fit(X_train, y_train, 
-                    eval_set=[(X_val, y_val)], 
-                    eval_metric=eval_metric,
-                    callbacks=[optuna.integration.LightGBMPruningCallback(trial, pruning_metric)])
-            
+            model.fit(
+                X_train,
+                y_train,
+                eval_set=[(X_val, y_val)],
+                eval_metric=eval_metric,
+                callbacks=[
+                    optuna.integration.LightGBMPruningCallback(trial, pruning_metric)
+                ],
+            )
+
             # The get the best score, we access the booster and then its evaluation history
             booster = model.booster_
             eval_results = booster.best_score
-            
+
             # Return the best score from the evaluation set for the specified metric
-            return eval_results['valid_0'][pruning_metric]
+            return eval_results["valid_0"][pruning_metric]
 
         else:
             # default for simple models
             pass
-            
+
         # Add random_state to parameters if the model supports it
         if "random_state" in model_cls.__init__.__code__.co_varnames:
             params["random_state"] = self.random_state

@@ -4,6 +4,7 @@ import os
 import datetime
 from jinja2 import Environment, FileSystemLoader
 
+
 class ReportGenerator:
     def __init__(self, template_dir=None, output_dir="reports/final"):
         if template_dir is None:
@@ -20,7 +21,9 @@ class ReportGenerator:
             return path
         return os.path.relpath(path, start=self.output_dir)
 
-    def generate_report(self, project_name, metrics, plots=None, eda_report=None, model_info=None):
+    def generate_report(
+        self, project_name, metrics, plots=None, eda_report=None, model_info=None
+    ):
         """
         Generate an HTML report combining EDA, evaluation metrics, and plots.
 
@@ -43,7 +46,7 @@ class ReportGenerator:
             "metrics": metrics,
             "plots": rel_plots,
             "eda_report": rel_eda_report,
-            "model_info": model_info or {}
+            "model_info": model_info or {},
         }
 
         output_html = template.render(report_data)

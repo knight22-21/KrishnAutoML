@@ -8,8 +8,6 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.impute import SimpleImputer
 
 
-
-
 class Preprocessor:
     """
     Builds a ColumnTransformer:
@@ -18,48 +16,50 @@ class Preprocessor:
     Returns numpy array to keep models framework-agnostic.
     """
 
-
     def __init__(self) -> None:
         self.pipeline: Optional[Pipeline] = None
         self.feature_names_: Optional[list[str]] = None
 
-
     @staticmethod
     def _get_ohe() -> OneHotEncoder:
-    # Handle different sklearn versions
+        # Handle different sklearn versions
         try:
             return OneHotEncoder(handle_unknown="ignore", sparse_output=False)
         except TypeError:
             return OneHotEncoder(handle_unknown="ignore", sparse=False)
 
-
-    def fit_transform(self, X: pd.DataFrame, y: Optional[pd.Series] = None) -> np.ndarray:
-        cat_cols = X.select_dtypes(include=["object", "category", "bool"]).columns.tolist()
+    def fit_transform(
+        self, X: pd.DataFrame, y: Optional[pd.Series] = None
+    ) -> np.ndarray:
+        cat_cols = X.select_dtypes(
+            include=["object", "category", "bool"]
+        ).columns.tolist()
         num_cols = X.select_dtypes(include=[np.number]).columns.tolist()
 
+        num_pipe = Pipeline(
+            [
+                ("imputer", SimpleImputer(strategy="median")),
+                ("scaler", StandardScaler()),
+            ]
+        )
 
-        num_pipe = Pipeline([
-        ("imputer", SimpleImputer(strategy="median")),
-        ("scaler", StandardScaler()),
-        ])
+        cat_pipe = Pipeline(
+            [
+                ("imputer", SimpleImputer(strategy="most_frequent")),
+                ("ohe", self._get_ohe()),
+            ]
+        )
 
-
-        cat_pipe = Pipeline([
-        ("imputer", SimpleImputer(strategy="most_frequent")),
-        ("ohe", self._get_ohe()),
-        ])
-
-
-        ct = ColumnTransformer([
-        ("num", num_pipe, num_cols),
-        ("cat", cat_pipe, cat_cols),
-        ])
-
+        ct = ColumnTransformer(
+            [
+                ("num", num_pipe, num_cols),
+                ("cat", cat_pipe, cat_cols),
+            ]
+        )
 
         self.pipeline = Pipeline([("ct", ct)])
         Xt = self.pipeline.fit_transform(X, y)
         return Xt
-
 
     def transform(self, X: pd.DataFrame) -> np.ndarray:
         if self.pipeline is None:

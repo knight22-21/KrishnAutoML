@@ -5,6 +5,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+
 class EDAReport:
     def __init__(self):
         pass
@@ -24,7 +25,7 @@ class EDAReport:
         missing.to_csv(os.path.join(output_dir, "missing_values.csv"))
 
         # 3. Target distribution
-        plt.figure(figsize=(6,4))
+        plt.figure(figsize=(6, 4))
         sns.histplot(y, kde=True)
         plt.title("Target Distribution")
         target_plot_path = os.path.join(output_dir, "target_distribution.png")
@@ -32,7 +33,7 @@ class EDAReport:
         plt.close()
 
         # 4. Correlation heatmap (numeric only)
-        plt.figure(figsize=(10,8))
+        plt.figure(figsize=(10, 8))
         corr = df.corr(numeric_only=True)
         sns.heatmap(corr, annot=False, cmap="coolwarm")
         plt.title("Feature Correlation Heatmap")
@@ -43,7 +44,8 @@ class EDAReport:
         # 5. Generate simple HTML
         html_path = os.path.join(output_dir, "eda_report.html")
         with open(html_path, "w") as f:
-            f.write(f"""
+            f.write(
+                """
 <!DOCTYPE html>
 <html>
 <head>
@@ -76,6 +78,7 @@ class EDAReport:
 
 </body>
 </html>
-            """)
-        
+            """
+            )
+
         print(f"EDA report generated at {html_path}")
