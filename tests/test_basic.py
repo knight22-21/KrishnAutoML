@@ -4,11 +4,7 @@ import pandas as pd
 
 def test_pipeline_runs(tmp_path):
     data = pd.DataFrame(
-        {
-            "feature1": [1, 2, 3, 4, 5],
-            "feature2": ["a", "b", "a", "b", "a"],
-            "target": [0, 1, 0, 1, 0],
-        }
+        {"feature1": list(range(10)), "feature2": ["a", "b"] * 5, "target": [0, 1] * 5}
     )
     automl = KrishnAutoML(target="target")
     automl.load_data(data)
