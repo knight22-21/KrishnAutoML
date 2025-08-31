@@ -2,9 +2,9 @@ name: KrishnAutoML CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
 
 jobs:
   build-test:
@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
-      fail-fast: false  # <-- prevents cancelling other jobs if one fails
+      fail-fast: false  # don't cancel other versions if one fails
 
     steps:
       - name: Checkout repository
