@@ -8,8 +8,10 @@ from .models.model_factory import ModelFactory
 from .tuning.tuner import Tuner
 from .evaluation.evaluator import Evaluator
 from .eda.eda_report import EDAReport
+from .reporting.report_generator import ReportGenerator
 from .utils.helpers import detect_problem_type
 from joblib import dump
+from sklearn.base import BaseEstimator
 
 
 
@@ -76,6 +78,11 @@ class KrishnAutoML:
         tuner = Tuner(cv=self.n_splits, random_state=self.random_state)
         self.results, self.best_model = tuner.run(candidates, X_train, y_train, problem_type=self.problem_type)
 
+        self.model_info = {
+            "name": type(self.best_model).__name__,
+            "params": self.best_model.get_params() if isinstance(self.best_model, BaseEstimator) else {}
+        }
+
         # Store test data for evaluation
         self.X_test = X_test
         self.y_test = y_test
@@ -97,6 +104,7 @@ class KrishnAutoML:
             y=self.y_test,
             problem_type=self.problem_type
         )
+        self.metrics=results
 
         print("Evaluation complete. Metrics:")
         for k, v in results.items():
@@ -119,3 +127,32 @@ class KrishnAutoML:
         eda_report.generate(self._loader.X_orig, self._loader.y_orig)
         
         return self
+    
+
+    def generate_report(self, project_name="AutoML_Project") -> str:
+        if not hasattr(self, "metrics") or not hasattr(self, "model_info"):
+            raise RuntimeError("Please run train_models() and evaluate() before generating the report.")
+
+        # Plots (conditionally included based on task)
+        plots = []
+        if self.problem_type == "classification":
+            plots = [
+                "reports/evaluation/confusion_matrix.png",
+                "reports/evaluation/roc_curve.png"
+            ]
+        elif self.problem_type == "regression":
+            plots = ["reports/evaluation/residual_plot.png"]
+
+        eda_report = "reports/eda/eda_report.html"
+
+        reporter = ReportGenerator()
+        path = reporter.generate_report(
+            project_name=project_name,
+            metrics=self.metrics,
+            plots=plots,
+            eda_report=eda_report,
+            model_info=self.model_info
+        )
+
+        print(f"📄 Final report saved to: {path}")
+        return path
