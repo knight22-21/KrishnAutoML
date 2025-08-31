@@ -50,6 +50,8 @@ class KrishnAutoML:
     def load_data(self, data: pd.DataFrame | str) -> "KrishnAutoML":
         """Accepts a CSV file path or pandas DataFrame; splits X, y."""
         self.X, self.y = self._loader.load(data, self.target)
+        if self.X is None or self.y is None:
+            raise ValueError("Loaded features or target are None. Check input data.")
         if self.problem_type == "auto":
             self.problem_type = detect_problem_type(self.y)
         return self
