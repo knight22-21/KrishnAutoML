@@ -156,10 +156,7 @@ class Tuner:
             }
 
             # Conditionally add the device parameter to the dictionary
-            if trial.suggest_categorical("use_gpu", [True, False]):
-                params["device"] = "gpu"
-            else:
-                params["device"] = "cpu"
+            params["device"] = "cpu"
 
             # Split data for a single-fold validation within the trial
             X_train, X_val, y_train, y_val = train_test_split(
