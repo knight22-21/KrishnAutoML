@@ -1,9 +1,9 @@
 [project]
 name = "krishnautoml"
-version = "0.1.0"
+version = "0.1.4"
 description = "Beginner-friendly AutoML library for tabular data"
 authors = [
-    { name = "Knight", email = "your_email@example.com" }
+    { name = "Krishna", email = "krishnatyagi2526@gmail.com" }
 ]
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -17,6 +17,7 @@ dependencies = [
     "jinja2",
     "joblib",
     "optuna",
+    "optuna-integration[lightgbm]",
 ]
 
 [project.optional-dependencies]
@@ -28,4 +29,7 @@ catboost = ["catboost"]
 krishnautoml = "krishnautoml.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["krishnautoml"]
+include = ["krishnautoml", "krishnautoml.*"]
+
+[tool.setuptools.package-data]
+"krishnautoml.reporting" = ["templates/*.html"]

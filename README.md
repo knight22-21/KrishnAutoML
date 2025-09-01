@@ -1,7 +1,7 @@
 # KrishnAutoML 🚀
 
 [![PyPI version](https://img.shields.io/pypi/v/krishnautoml.svg)](https://pypi.org/project/krishnautoml/)
-[![Build Status](https://github.com/<your-username>/KrishnAutoML/actions/workflows/ci.yml/badge.svg)](https://github.com/<your-username>/KrishnAutoML/actions)
+[![Build Status](https://github.com/knight22-21/KrishnAutoML/actions/workflows/ci.yml/badge.svg)](https://github.com/knight22-21/KrishnAutoML/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 **KrishnAutoML** is a lightweight, beginner-friendly, and production-ready **AutoML library** for **tabular data**.  
