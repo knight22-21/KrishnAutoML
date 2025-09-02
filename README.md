@@ -1,4 +1,4 @@
-# KrishnAutoML 🚀
+# KrishnAutoML
 
 [![PyPI version](https://img.shields.io/pypi/v/krishnautoml.svg)](https://pypi.org/project/krishnautoml/)
 [![Build Status](https://github.com/knight22-21/KrishnAutoML/actions/workflows/ci.yaml/badge.svg)](https://github.com/knight22-21/KrishnAutoML/actions)
@@ -9,23 +9,23 @@ It automates the end-to-end machine learning workflow with **minimal user input*
 
 ---
 
-## ✨ Features
+## Features
 
-- 📂 Load data from CSV or Pandas DataFrame  
-- 🔍 Automatic problem type detection (classification or regression)  
-- 🧹 Smart preprocessing (missing values, categorical encoding, scaling)  
-- 📊 Optional **EDA reports** for insights  
-- 🤖 Train multiple models (LightGBM, XGBoost, CatBoost, Scikit-Learn)  
-- 🎯 Automated model selection and hyperparameter tuning (Optuna / GridSearchCV)  
-- 📈 Flexible cross-validation (KFold, StratifiedKFold, GroupKFold)  
-- 📝 Multiple evaluation metrics dynamically  
-- ⚡ Early stopping and GPU support  
-- 💾 Save models + reproducible pipeline code  
-- 📑 Auto-generated reports in HTML/Markdown  
+- Load data from CSV or Pandas DataFrame  
+- Automatic problem type detection (classification or regression)  
+- Smart preprocessing (missing values, categorical encoding, scaling)  
+- Optional EDA reports for insights  
+- Train multiple models (LightGBM, XGBoost, CatBoost, Scikit-Learn)  
+- Automated model selection and hyperparameter tuning (Optuna / GridSearchCV)  
+- Flexible cross-validation (KFold, StratifiedKFold, GroupKFold)  
+- Multiple evaluation metrics dynamically  
+- Early stopping and GPU support  
+- Save models + reproducible pipeline code  
+- Auto-generated reports in HTML/Markdown  
 
 ---
 
-## 🛠 Installation
+## Installation
 
 From PyPI (after publishing):
 ```bash
@@ -35,16 +35,16 @@ pip install krishnautoml
 From source:
 
 ```bash
-git clone https://github.com/<your-username>/KrishnAutoML.git
+git clone https://github.com/knight22-21/KrishnAutoML.git
 cd KrishnAutoML
 pip install -e .[dev]
 ```
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
-### **Python API**
+### Python API
 
 ```python
 from krishnautoml import KrishnAutoML
@@ -65,7 +65,7 @@ automl = KrishnAutoML(target="Survived", problem_type="auto")
 print("Best model metrics:", automl.best_score)
 ```
 
-### **Command Line Interface (CLI)**
+### Command Line Interface (CLI)
 
 ```bash
 krishnautoml fit --data data/titanic.csv --target Survived --report
@@ -79,7 +79,7 @@ This will:
 
 ---
 
-## 📊 Example Output
+## Example Output
 
 **Metrics (Classification example):**
 
@@ -89,28 +89,28 @@ This will:
 
 **Generated Report:**
 
-* 📈 Confusion matrix
-* 🔑 Feature importance
-* 📊 ROC-AUC curve
-* 📑 Summary of preprocessing steps
+* Confusion matrix
+* Feature importance
+* ROC-AUC curve
+* Summary of preprocessing steps
 
 ---
 
-## ⚙️ Advanced Usage
+## Advanced Usage
 
-* 🔄 Custom cross-validation:
+* Custom cross-validation:
 
 ```python
 automl = KrishnAutoML(target="SalePrice", cv_strategy="KFold", n_splits=10)
 ```
 
-* 🎯 Specify metrics:
+* Specify metrics:
 
 ```python
 automl = KrishnAutoML(target="Survived", metrics=["accuracy", "f1"])
 ```
 
-* 📦 Load trained model:
+* Load trained model:
 
 ```python
 from joblib import load
@@ -119,12 +119,12 @@ model = load("best_model.pkl")
 
 ---
 
-## 🧑‍💻 Development
+## Development
 
 Clone and install dev dependencies:
 
 ```bash
-git clone https://github.com/<your-username>/KrishnAutoML.git
+git clone https://github.com/knight22-21/KrishnAutoML.git
 cd KrishnAutoML
 pip install -e .[dev]
 ```
@@ -142,30 +142,28 @@ flake8 krishnautoml
 black krishnautoml
 ```
 
+---
 
-## 📜 License
+## License
 
-MIT License © 2025 \[Your Name]
+MIT License © 2025 \Krishna Tyagi
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome!
 
 * Fork the repo
 * Create a feature branch
-* Submit a PR 🎉
+* Submit a PR
 
 ---
 
-## 🙌 Acknowledgements
+## Acknowledgements
 
 * [scikit-learn](https://scikit-learn.org)
 * [XGBoost](https://xgboost.ai)
 * [LightGBM](https://lightgbm.readthedocs.io)
 * [CatBoost](https://catboost.ai)
 * [Optuna](https://optuna.org)
-
-
-
