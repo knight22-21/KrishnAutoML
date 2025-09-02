@@ -209,3 +209,8 @@ __marimo__/
 
 
 reports/
+examples/
+data/
+demo.py
+sample.py
+best_model.pkl
