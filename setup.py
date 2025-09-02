@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="krishnautoml",
-    version="0.1.4",
+    version="0.1.5",
     description="AutoML pipeline for classification and regression",
     author="Krish",
     license="MIT",
