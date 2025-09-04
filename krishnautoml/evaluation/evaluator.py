@@ -101,7 +101,7 @@ class Evaluator:
         if "r2" in metrics:
             results["r2"] = r2_score(y, y_pred)
         if "rmse" in metrics:
-            results["rmse"] = mean_squared_error(y, y_pred, squared=False)
+            results["rmse"] = np.sqrt(mean_squared_error(y, y_pred))
         if "mae" in metrics:
             results["mae"] = mean_absolute_error(y, y_pred)
         if "mape" in metrics:

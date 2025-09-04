@@ -1,6 +1,6 @@
 [project]
 name = "krishnautoml"
-version = "1.0.0"
+version = "1.0.1"
 description = "Beginner-friendly AutoML library for tabular data"
 authors = [
     { name = "Krishna", email = "krishnatyagi2526@gmail.com" }

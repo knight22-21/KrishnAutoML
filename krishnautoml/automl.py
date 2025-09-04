@@ -65,7 +65,7 @@ class KrishnAutoML:
         factory = ModelFactory(
             problem_type=self.problem_type, random_state=self.random_state
         )
-        candidates = factory.get_models(models)
+        candidates = factory.get_models(X=self.X, include=models)
 
         from sklearn.model_selection import train_test_split
 
