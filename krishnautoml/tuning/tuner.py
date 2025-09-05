@@ -125,6 +125,8 @@ class Tuner:
                 "tree_method": "hist",
                 "predictor": "cpu_predictor",
             }
+            if "use_gpu" in trial.params:
+                del trial.params["use_gpu"]
 
             model = model_cls(**params)
 
