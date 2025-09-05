@@ -35,16 +35,28 @@ def get_default_scoring(problem_type: str) -> str:
 # In krishnautoml/utils/helpers.py
 
 
-def safe_import_xgboost(task: str, random_state: int):
-    """Return configured xgboost model class or None if not installed."""
+def safe_import_xgboost(task, random_state):
     try:
         from xgboost import XGBClassifier, XGBRegressor
-    except Exception:
-        return None
 
-    if task == "cls":
-        return XGBClassifier
-    return XGBRegressor
+        if task == "cls":
+            # Ensure CPU usage by default
+            return lambda **kwargs: XGBClassifier(
+                random_state=random_state,
+                tree_method="hist",
+                predictor="cpu_predictor",
+                **kwargs,
+            )
+        else:
+            # Ensure CPU usage by default
+            return lambda **kwargs: XGBRegressor(
+                random_state=random_state,
+                tree_method="hist",
+                predictor="cpu_predictor",
+                **kwargs,
+            )
+    except ImportError:
+        return None
 
 
 def safe_import_lightgbm(task: str, random_state: int):
