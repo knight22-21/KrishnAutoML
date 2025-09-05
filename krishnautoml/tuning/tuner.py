@@ -121,11 +121,6 @@ class Tuner:
                     "learning_rate", 0.01, 0.3, log=True
                 ),
                 "subsample": trial.suggest_float("subsample", 0.5, 1.0),
-                "tree_method": (
-                    "gpu_hist"
-                    if trial.suggest_categorical("use_gpu", [True, False])
-                    else "auto"
-                ),
                 "verbosity": 0,
             }
 
