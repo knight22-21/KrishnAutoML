@@ -122,6 +122,7 @@ class Tuner:
                 ),
                 "subsample": trial.suggest_float("subsample", 0.5, 1.0),
                 "verbosity": 0,
+                "tree_method": "hist",
             }
 
             model = model_cls(**params)
