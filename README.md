@@ -7,7 +7,7 @@
 **KrishnAutoML** is a lightweight, beginner-friendly, and production-ready **AutoML library** for **tabular data**.  
 It automates the end-to-end machine learning workflow with **minimal user input**, while keeping things modular and extensible.
 
----
+--- 
 
 ## Features
 
